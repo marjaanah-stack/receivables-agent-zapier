@@ -17,10 +17,7 @@ A smart, **AI-powered Receivables Agent** that automates AR (accounts receivable
 
 ---
 
-### 🧠 Flow Diagram
-
-## 🧠 Flow Diagram (App Connections)
-
+## 🧠 Flow Diagram
 
 ![Zapier — App Connections](docs/screenshots/02-app-connections.png?raw=true)
 
@@ -69,7 +66,7 @@ Copy code
 ## ⚙️ Agent Setup in Zapier
 
 ### Tools used
-![Agent Tools](docs/screenshots/03-agent-tools.png)
+![Agent Tools](docs/screenshots/03-agent-tools.png?raw=true)
 
 - Google Sheets → **Lookup Spreadsheet Rows (Advanced)**
 - Gmail → **Create Draft**
@@ -77,7 +74,7 @@ Copy code
 - ChatGPT (OpenAI) → **Conversation**
 
 ### Instructions block
-![Agent Instructions](docs/screenshots/04-instructions.png)
+![Agent Instructions](docs/screenshots/04-instructions.png?raw=true)
 
 Paste the full instructions from `docs/AGENT_INSTRUCTIONS.md`.  
 The Agent reads Controls dynamically (DRY_RUN, thresholds, Slack channel, etc).
@@ -86,7 +83,7 @@ The Agent reads Controls dynamically (DRY_RUN, thresholds, Slack channel, etc).
 
 ## 🚀 Running the Agent
 
-![Agent Run](docs/screenshots/05-run.png)
+![Agent Run](docs/screenshots/05-run.png?raw=true)
 
 From **Activity → New run**, type:
 
@@ -98,7 +95,7 @@ The transcript shows read → compose → draft → update → summary.
 
 ## 📨 Gmail Draft Output
 
-![Gmail Drafts](docs/screenshots/06-gmail-drafts.png)
+![Gmail Drafts](docs/screenshots/06-gmail-drafts.png?raw=true)
 
 - Subject/body tailored by **overdue bucket** and **amount**  
 - UK spelling & tone; notes (e.g., disputes/promises) reflected in copy  
@@ -109,7 +106,7 @@ The transcript shows read → compose → draft → update → summary.
 
 ## 📊 Sheet Audit Updates
 
-![Sheet Updates](docs/screenshots/07-sheet-updates.png)
+![Sheet Updates](docs/screenshots/07-sheet-updates.png?raw=true)
 
 After each draft:
 - `status` → **Draft created**  
@@ -120,7 +117,7 @@ After each draft:
 
 ## 💬 Slack Summary
 
-![Slack Summary](docs/screenshots/08-slack-summary.png)
+![Slack Summary](docs/screenshots/08-slack-summary.png?raw=true)
 
 Example message:
 > **Receivables Agent Run — 29 Sep 2025**  
