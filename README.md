@@ -1,110 +1,212 @@
+# 🤖 Receivables Agent — Automated AR Follow-Up (Zapier + OpenAI + Google Workspace)
+
 ![Demo](demo.gif)
 
-# Receivables Agent (Zapier + OpenAI + Google Workspace)
-
-This project showcases an **Accounts Receivable automation** built with **Zapier Agents**, **OpenAI**, **Google Sheets & Gmail**, and **Slack**.  
-The Agent reads AR data from a Sheet, computes *days past due* and aging buckets, drafts **polite but firm UK‑spelling** chaser emails (firmness scales with amount & lateness), creates **Gmail drafts only** (never sends), posts a **Slack summary**, and updates the Sheet.
+A smart, **AI-powered Receivables Agent** that automates AR (accounts receivable) chasers — reading invoice data from **Google Sheets**, drafting polite-but-firm reminder emails, posting a summary to **Slack**, and updating the sheet status — all through **Zapier AI Agents** and the **OpenAI API**.
 
 ---
 
-## ✨ Features
-- Google Sheets → ingest AR rows and **Controls**
-- Auto compute **days_past_due** and **aging buckets** (0–30 / 31–60 / 61–90 / 90+)
-- Draft professional chaser emails via **OpenAI** → **Gmail Drafts** (no send)
-- **Slack** daily/On‑demand summary
-- Updates `status`, `last_contacted_at`, and `last_email_subject` in the Sheet
-- Guardrails: **DRY_RUN**, **MAX_EMAILS_PER_RUN**, **MIN_AMOUNT_GBP**, **MIN_DAYS_OVERDUE**
+## 📚 Overview
+
+| Component | Description |
+|------------|--------------|
+| **Trigger** | On-demand (manual or scheduled daily) |
+| **Apps Used** | Google Sheets, Gmail, Slack, ChatGPT (OpenAI) |
+| **Purpose** | Automate receivables chasing with tone control and audit trail |
+| **Safety** | Drafts only (no auto-send), rate-limited by run parameters |
 
 ---
 
-## 🧱 Stack
-- Zapier **Agents** (On‑demand)
-- Apps: Google Sheets, Gmail (Draft), Slack, ChatGPT (OpenAI)
-- Optional: Google Drive (for attaching statements), Notion (follow‑ups)
-- Language/tone: **UK spelling**
+## 🧠 Flow Diagram
+
+![Agent Flow Overview](docs/screenshots/02-agent-setup.png)
+
+The Agent:
+1. Reads AR data from **Google Sheets**
+2. Filters invoices that are overdue
+3. Drafts tailored email reminders using ChatGPT
+4. Creates Gmail drafts (never sends)
+5. Updates the sheet with contact date & subject
+6. Posts a concise summary to **Slack**
 
 ---
 
-## 📁 Repository layout
-```
-.
-├── README.md
-├── data/
-│   ├── receivables.csv
-│   ├── controls.csv
-│   └── email_templates.csv
-└── docs/
-    ├── SETUP.md
-    ├── AGENT_INSTRUCTIONS.md
-    ├── ARCHITECTURE.md
-    ├── TROUBLESHOOTING.md
-    └── screenshots/   # put your screenshots here
-```
-> Use `docs/screenshots` to drop your real Zapier/Sheets/Gmail screenshots.
+## 🧾 Example Data Structure (Google Sheets)
+
+### Receivables Tab
+![Sheets Tabs Overview](docs/screenshots/01-sheets-tabs.png)
+
+Columns:
+invoice_id | customer_name | customer_email | amount_gbp |
+issue_date | due_date | terms_days | status |
+last_contacted_at | promise_to_pay_date | notes | last_email_subject
+
+shell
+Copy code
+
+### Controls Tab
+Key configuration flags (editable in Google Sheets):
+DRY_RUN, TRUE
+MAX_EMAILS_PER_RUN, 20
+MIN_AMOUNT_GBP, 100
+MIN_DAYS_OVERDUE, 3
+SUMMARY_SLACK_CHANNEL, #finance-updates
+REPLY_TO, ar@yourco.example
+
+csharp
+Copy code
+
+### Email Templates Tab
+Contains message structures by **aging bucket**:
+template_name, bucket, min_days_overdue, subject, body
+
+yaml
+Copy code
 
 ---
 
-## 🚀 Quickstart
-1. **Create** a Google Sheet named `Receivables_Exercise` and import CSVs from `data/` as tabs:
-   - `Receivables`, `Controls`, `Email_Templates`
-2. **Zapier → App Connections:** connect Google Sheets, Gmail, Slack, ChatGPT (OpenAI).
-3. **Create Agent → On‑demand trigger** and add tools:
-   - Google Sheets: *Lookup Spreadsheet Rows (Advanced)*
-   - Gmail: *Create Draft*
-   - Slack: *Send Channel Message*
-   - ChatGPT (OpenAI): *Conversation*
-4. Paste the full instructions from `docs/AGENT_INSTRUCTIONS.md`.
-5. **Run:** Agent → Activity → *New run* → `Run receivables chase now`.
-6. Check **Gmail → Drafts**, **Slack**, and the **Sheet** for updated fields.
+## ⚙️ Agent Setup in Zapier
+
+![Zapier Agent Configuration](docs/screenshots/03-agent-instructions.png)
+
+**Steps:**
+1. Create a new **Zapier Agent** called `Receivables Agent`.
+2. Add tools:
+   - Google Sheets → Lookup Spreadsheet Rows (Advanced)
+   - Gmail → Create Draft
+   - Slack → Send Channel Message
+   - ChatGPT (OpenAI) → Conversation
+3. Paste the *instructions block* from `docs/AGENT_INSTRUCTIONS.md`.
+
+The agent reads configuration values (e.g. DRY_RUN, thresholds) dynamically from the Controls tab.
 
 ---
 
-## 🗺️ Architecture
-See `docs/ARCHITECTURE.md` for a **Mermaid** flowchart + sequence diagram you can view directly on GitHub.
+## 📨 Gmail Draft Output
+
+![Gmail Draft Example](docs/screenshots/04-gmail-draft.png)
+
+Each email is created as a **draft** in Gmail:
+- Subject line tailored to the invoice and overdue bucket
+- Tone varies with aging severity
+- Notes (e.g. “Partial dispute”) influence context
+- Reply-to is configurable from the Controls tab
 
 ---
 
-## 🧪 Data & Controls
-Edit `controls.csv` to change guardrails:
-- `DRY_RUN=TRUE` → Drafts only (safe default)
-- `MAX_EMAILS_PER_RUN` → Cap drafts (e.g., 20)
-- `MIN_AMOUNT_GBP`, `MIN_DAYS_OVERDUE` → Materiality & grace period
+## 💬 Slack Summary Report
+
+![Slack Summary Example](docs/screenshots/05-slack-summary.png)
+
+After every run, the Agent posts a summary message such as:
+
+> **Receivables Agent Run — 29 Sep 2025**  
+> Drafts created: 7 (capped at 20)  
+> Oldest overdue: 92 days  
+> Total chased: £41,550  
+> Guardrails: DRY_RUN=TRUE · MIN £100 · MIN 3 days
 
 ---
 
-## 🧯 Troubleshooting
-Common issues and fixes in `docs/TROUBLESHOOTING.md` (e.g., Gmail drafts created but columns not updated, Slack channel not found, OpenAI errors, attachments).
+## 🧩 How It Works
+
+| Step | Description |
+|------|--------------|
+| 1️⃣ | **Read Receivables tab** from Google Sheets |
+| 2️⃣ | Compute `days_past_due` |
+| 3️⃣ | Filter by overdue thresholds |
+| 4️⃣ | Choose correct **email template** by bucket |
+| 5️⃣ | Render subject/body using **ChatGPT** |
+| 6️⃣ | Create **Gmail Draft** |
+| 7️⃣ | Update the row (status, last_contacted_at, last_email_subject) |
+| 8️⃣ | Post Slack summary |
 
 ---
 
-## 📸 Screenshots
-Add your screenshots under `docs/screenshots/` and embed them in `docs/SETUP.md`. A checklist is provided in that file.
+## 🧱 Folder Structure
+
+receivables-agent-zapier/
+│
+├── data/ # Sample CSVs for Receivables, Controls, Templates
+├── docs/
+│ ├── screenshots/ # PNGs used in README
+│ ├── AGENT_INSTRUCTIONS.md # Zapier Agent instruction block
+│ ├── ARCHITECTURE.md # Flow & design notes
+│ ├── SETUP.md # Setup guide (Google Sheets + Zapier)
+│ ├── TROUBLESHOOTING.md # Common fixes
+│
+├── demo.gif # Visual demo of the agent run
+├── README.md # This file
+└── LICENSE
+
+yaml
+Copy code
 
 ---
 
-## 📝 License
-MIT — free to use for your portfolio demos.
+## 🧪 Test Run
 
+Use the **Zapier Agent “Activity → New Run”** command:
 
+> `Run receivables chase now`
 
-### Screenshots (exact filenames)
-Place these PNGs into `docs/screenshots/` **with exactly these names** so they render in the README:
+Watch in the Zapier UI:
+- ✅ Rows fetched  
+- 🧠 Email bodies rendered via OpenAI  
+- ✉️ Gmail drafts appear  
+- 🧾 Sheet updates occur  
+- 🔔 Slack summary posted
 
-1. `01-sheets-tabs.png` — Google Sheet with tabs imported  
-2. `02-app-connections.png` — Zapier App Connections  
-3. `03-agent-tools.png` — Zapier Agent tools list  
-4. `04-instructions.png` — Instructions pasted in Agent  
-5. `05-run.png` — Activity run transcript  
-6. `06-gmail-drafts.png` — Gmail drafts view  
-7. `07-sheet-updates.png` — Receivables updates (last_contacted_at, last_email_subject)  
-8. `08-slack-summary.png` — Slack summary post  
+---
 
-They are referenced below:
-![Sheets](docs/screenshots/01-sheets-tabs.png)
-![Connections](docs/screenshots/02-app-connections.png)
-![Tools](docs/screenshots/03-agent-tools.png)
-![Instructions](docs/screenshots/04-instructions.png)
-![Run](docs/screenshots/05-run.png)
-![Drafts](docs/screenshots/06-gmail-drafts.png)
-![Updates](docs/screenshots/07-sheet-updates.png)
-![Slack](docs/screenshots/08-slack-summary.png)
+## ⚙️ Controls & Safety
+
+| Parameter | Purpose |
+|------------|----------|
+| **DRY_RUN** | `TRUE` = drafts only (safe default) |
+| **MAX_EMAILS_PER_RUN** | Prevents spamming |
+| **MIN_AMOUNT_GBP / MIN_DAYS_OVERDUE** | Materiality filters |
+| **Slack Channel** | For reporting outcomes |
+
+---
+
+## 🧰 Troubleshooting
+
+If the agent skips records:
+- Check the `MIN_DAYS_OVERDUE` and `promise_to_pay_date` filters
+- Ensure all tabs (Receivables, Controls, Templates) exist
+- Verify Zapier Google Sheets connection is to the correct account
+
+For PDF statement attachments, connect **Google Drive → Export File** (optional).
+
+---
+
+## 📄 License
+MIT License — free to reuse and modify.
+
+---
+
+## 🙋‍♀️ Author
+
+**Marjaana Peeters**  
+Finance-AI & Automation Enthusiast  
+📍 London, UK  
+💼 [LinkedIn](www.linkedin.com/in/marjaana-peeters-0442a4) | 🧠 [ChatGPT-Native Portfolio](https://github.com/marjaan-stack)
+
+---
+
+### ⭐ Screenshot Reference Index
+
+| File | Description |
+|------|--------------|
+| `01-sheets-tabs.png` | Google Sheets tabs overview |
+| `02-agent-setup.png` | Zapier agent workflow |
+| `03-agent-instructions.png` | Agent instruction block |
+| `04-gmail-draft.png` | Example generated Gmail draft |
+| `05-slack-summary.png` | Slack summary message |
+| `06-run-complete.png` | Completed Zapier agent run |
+
+---
+
+💡 *Tip:* To make images render instantly, ensure paths are relative (as above) and committed to `docs/screenshots/`.
+
