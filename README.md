@@ -19,6 +19,9 @@ A smart, **AI-powered Receivables Agent** that automates AR (accounts receivable
 
 ### 🧠 Flow Diagram
 
+## 🧠 Flow Diagram (App Connections)
+
+
 ![Zapier — App Connections](docs/screenshots/02-app-connections.png?raw=true)
 
 
