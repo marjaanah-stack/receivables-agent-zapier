@@ -1,0 +1,2 @@
+invoice_id,customer_name,customer_email,amount_gbp,issue_date,due_date,terms_days,status,last_contacted_at,promise_to_pay_date,notes,last_email_subject
+INV-1001,Harbor Retail Ltd,ap@harbor-retail.example,1250,2025-07-30,2025-08-29,30,Open,,,First order,

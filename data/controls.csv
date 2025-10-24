@@ -1,0 +1,7 @@
+key,value,description
+DRY_RUN,TRUE,Only create drafts (no send).
+MAX_EMAILS_PER_RUN,20,Cap drafts per run.
+MIN_AMOUNT_GBP,100,Chase only invoices >= amount.
+MIN_DAYS_OVERDUE,3,Grace period (days).
+SUMMARY_SLACK_CHANNEL,#finance-updates,Slack channel for summary.
+REPLY_TO,ar@yourco.example,Reply-To header.
