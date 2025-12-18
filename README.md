@@ -2,7 +2,7 @@
 
 ![Demo](demo.gif)
 
-A smart, **AI-powered Receivables Agent** that automates AR (accounts receivable) chasers — reading invoice data from **Google Sheets**, drafting polite-but-firm reminder emails, posting a summary to **Slack**, and updating the sheet — using **Zapier AI Agents** and the **OpenAI API**.
+This is a smart, **AI-powered Receivables Agent** that automates AR (accounts receivable) chasers — reading invoice data from **Google Sheets**, drafting polite-but-firm reminder emails, posting a summary to **Slack**, and updating the sheet — using **Zapier AI Agents** and the **OpenAI API**.
 
 ---
 
